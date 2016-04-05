@@ -1,0 +1,63 @@
+* {
+  font-family: monaco;
+}
+body{
+	background-repeat:no-repeat;
+      display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+}
+
+ #gifSearch {
+            margin-top: 0;
+        }
+        nav {
+            display:inline-block
+        }
+
+
+        body {
+      
+      }
+
+      main {
+        flex: 1 0 auto;
+      }
+        .nav {
+            height: 60px;
+            opacity:0.5;
+        }
+
+
+        .activate {
+            display: row;
+            height: 50px;
+        }
+
+        #player {
+            height: 100px;
+            background: transparent;
+        }
+
+        iframe {
+          height: 130px;
+            background: transparent;
+        }
+
+        #foot {
+            height: 160px;
+            background: transparent;
+        }
+
+        h2 {
+            margin-top: 300px;
+            position:sticky;
+        }
+
+        .disappear {
+            background: transparent;
+        }
+
+        p {
+            color:white;
+        }

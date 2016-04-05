@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <!-- Compiled and minified CSS -->
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+<script type="text/javascript" src="scripts/soundcloud.player.api.js"></script>
+    <script src="http://connect.soundcloud.com/sdk.js"></script>
+    <script type="text/javascript" src='{{ url_for('static', filename='js/scripts.js') }}'></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+
+<script type="text/javascript" src="scripts/soundcloud.player.api.js"></script>
+
+
+<script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+<script type="text/javascript">
+// need to change from soundcloud to spotify/pandora
+        $(document).ready(function() {
+          $("#goAway").fadeIn(1000);
+
+            var iframeElement   = document.querySelector('iframe');
+            var iframeElementID = iframeElement.id;
+            var widget1         = SC.Widget(iframeElement);
+            var widget2         = SC.Widget(iframeElementID);
+
+
+            var menu = $('#foot')
+            var nav = $("#navs")
+            var timeout = 0;
+            menu.hide();
+            nav.hide();
+
+            // set to widget url
+            // enable_api=true;
+
+                  gifs = $.get("http://api.giphy.com/v1/gifs/search?q=cats&api_key=dc6zaTOxFJmzC");
+                  console.log("TEST QUERY", gifs);
+
+                    $(".activate").on('mouseenter', function() {
+                            hovering = true;
+
+                    $("#foot, #navs").stop(true, true).slideDown(500);
+                            if (timeout > 0) {
+                        clearTimeout(timeout);
+                    }
+                }).on("mouseleave", function () {
+                    resetHover();
+                        });
+
+                    $("#foot, #navs").on("mouseenter", function () {
+                    // reset flag
+                    hovering = true;
+                    // reset timeout
+                    startTimeout();
+                }).on("mouseleave", function () {
+                    // The timeout is needed incase you go back to the main menu
+                    resetHover();
+                });
+
+                function startTimeout() {
+                    // This method gives you 1 second to get your mouse to the sub-menu
+                    timeout = setTimeout(function () {
+                        closeMenu();
+                    }, 500);
+                };
+
+                function closeMenu() {
+                    // Only close if not hovering
+                    if (!hovering) {
+                        $('#foot, #navs').stop(true, true).slideUp(500);
+                    }
+                };
+
+                function resetHover() {
+                    // Allow the menu to close if the flag isn't set by another event
+                    hovering = false;
+                    // Set the timeout
+                    startTimeout();
+                };
+                $('#search').submit(function (){
+                  var gif =  $("#giphysearch").val();
+                $.get("http://api.giphy.com/v1/gifs/search?q="+gif+"&api_key=dc6zaTOxFJmzC", function(res) {
+                    console.log(res);
+                    $('.fadeIt').fadeOut(2000);
+
+                    var i = 0;
+                    var gifArray = [];
+                    var gifs= (res);
+                    gif = gifs["data"];
+                    var myGifs = _.pluck(gifs["data"], "images");
+
+                    // var gifurl = _.pluck(url["original"], "url")
+                    // console.log (my)
+                    console.log(myGifs);
+                    for(i in myGifs) {
+                      gifArray.push(myGifs[i].original.url);
+                        if(gifArray.length > 20){
+                            for( var x = 0; x <11; x++){
+                                gifArray.shift();
+                            }
+                            console.log(gifArray, "GifArray too long, popping first 10 entries.")
+                        }
+                      // giphy = myGifs[i]
+                      // console.log(giphy, "GIIIPHY")
+                      // var original = giphy.original.url
+                      // var original = _.pluck(giphy["original"], "object")
+                      // console.log(original, "ORIGINAL")
+                      console.log(myGifs[i].original.url);
+                    }
+
+
+                      // $("body").css( "background-image", "url('" +myGifs[i].original.url+ "')");
+
+                      var current = 0;
+                    function nextBackground(){
+                      random = Math.floor(Math.random()*gifArray.length);
+                      current = current % gifArray.length;
+                      $("body").css( "background-image", "url('"+gifArray[random]+"')");
+                    }
+                    setInterval(nextBackground, 2500);
+                    $("body").css('background-image', gifArray[0]);
+
+                    console.log("res gifs::::::::", gifArray);
+
+                });
+                  return false;
+                });
+
+
+                  SC.initialize({
+                    client_id: '9812d36e4b4576afc3dfa4e5beeee407'
+                  });
+
+      $('#search').submit(function (){
+          console.log(current)
+       var userSearch = $("#musicInput").val();
+                console.log(userSearch)
+           songs = SC.get('/tracks', { genres: userSearch }, function(tracks) {
+             $(tracks).each(function(index, track) {
+               console.log(track.title, track.genre, track.bpm)  ;
+             });
+
+             console.log("NOW FOR THE")
+             SC.get('/tracks/'+userSearch, function(track) {
+               SC.oEmbed(track.permalink_url, {auto_play: true},
+                document.getElementById('player'));
+       });
+       });
+
+
+
+           var current = $("#musicInput").val()
+           console.log('ayeeeeeeeeeeeeee')
+        return false;
+});
+
+
+          });
+
+
+    </script>
+    <script type="text/javascript">
+     // soundcloud.debug = true;
+$('#musicSearch').submit(function (){
+        var userSearch = $("#musicInput").val();
+
+  (function(){
+    var widgetIframe = document.getElementById('sc-widget'),
+        widget       = SC.Widget(widgetIframe),
+        newSoundUrl = 'http://api.soundcloud.com/tracks/'+userSearch+'&autoplay=true';
+
+    widget.bind(SC.Widget.Events.READY, function() {
+      // load new widget
+      widget.bind(SC.Widget.Events.FINISH, function() {
+        widget.load(newSoundUrl {
+        });
+      });
+    });
+
+  }());
+    return false;
+});
+
+
+// </script>
+
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <style>
+        #gifSearch {
+            margin-top: 0;
+        }
+        nav {
+            display:inline-block
+        }
+
+
+        body {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      main {
+        flex: 1 0 auto;
+      }
+        .nav {
+            height: 60px;
+            opacity:0.5;
+        }
+
+
+        .activate {
+            display: row;
+            height: 50px;
+        }
+
+        #player {
+            height: 100px;
+            background: transparent;
+        }
+
+        iframe {
+          height: 125px;
+            background: transparent;
+        }
+
+        #foot {
+            height: 160px;
+            background: transparent;
+        }
+
+        h2 {
+            margin-top: 300px;
+            position:sticky;
+        }
+
+        .disappear {
+            background: transparent;
+        }
+
+        p {
+            color:white;
+        }
+
+    </style>
+
+    </head>
+    <body style="background-repeat: no-repeat; background-size: cover;">
+        <div id="navs">
+
+        <nav>
+    <div class="nav-wrapper z-depth-3" id="gifSearch">
+      <form id="search">
+        <div class="input-field z-depth-3">
+          <input id="musicInput" type="search" required class="green darken-2" placeholder="Music">
+          <input id="giphysearch" type="search" required class="green darken-2" Placeholder="Gifs">
+
+          <label for="search"><i class="material-icons"></i></label>
+          <i class="material-icons">close</i>
+        </div>
+          <button class="btn waves-effect waves-light left z-depth-3" type="submit" name="action">Search
+    <i class="material-icons left"></i>
+  </button>
+      </form>
+        <a href="/logout"><button class="btn waves-effect waves-light right z-depth-3" name="action">Logout
+    <i class="material-icons right"></i></a>
+  </button>
+    </div>
+  </nav>
+
+</div>
+
+        <div class="activate">
+<!--         <p>search again</p>
+ -->        </div>
+
+<!--        these will hover/fadeout after input and display images-->
+       <main >
+           <h1 class='text center fadeIt'>Hey {{session['name']}}</h1>
+           <h2 class="text center fadeIt" id="goAway">kick it?</h2>
+<!--                 <h1>main area for gifs</h1>
+ -->
+
+        </main>
+
+        <div class="activate col s12">
+            <p class="text center">change song?</p>
+        </div>
+        <footer class="page-footer disappear" id="foot">
+
+          <div class="container disappear">
+
+            <div class="row testIt" id="player">
+
+                <iframe id="sc-widget" width="100%" height="100" scrolling="no" class="testIt" frameborder="no" src="https://w.soundcloud.com/player/?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%&show_artwork=true&autoplay=true" id="scPlayer"></iframe>
+<script src="https://w.soundcloud.com/player/api.js" type="text/javascript"></script>
+
+
+            </div>
+          </div>
+
+        </footer>
+
+</body>
+
+</html>

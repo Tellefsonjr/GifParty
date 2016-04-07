@@ -11,22 +11,22 @@ class Dojoparty_Model(Model):
     def add(self, new_user):
         errors = []
         if len(new_user['first_name']) < 1 or len(new_user['last_name']) < 1 or len(new_user['password']) < 1 or len(new_user['confirm_password']) < 1 or len(new_user['email']) < 1:
-            errors.append('All fields are needed wtf LOL')
+            errors.append('All fields are required.')
         if new_user['password'] != new_user['confirm_password']:
             print new_user['password'], new_user['confirm_password']
-            errors.append('Passwords do not match LOL')
+            errors.append('Passwords do not match.')
         if len(new_user['password']) < 8:
-            errors.append('Password must be AT LEAST 8 characters long ya big ol dummy')
+            errors.append('Password must be AT LEAST 8 characters long.')
         if len(new_user['confirm_password']) < 8:
-            errors.append('Password must be AT LEAST 8 characters long ya big ol doofus')
+            errors.append('Password must be AT LEAST 8 characters long.')
         if not PASS_REGEX.match(new_user['password']):
-            errors.append("Password must contain AT LEAST one number, upper and lowercase letter LOL")
+            errors.append("Password must contain AT LEAST one number, upper and lowercase letter.")
         if not EMAIL_REGEX.match(new_user['email']):
-            errors.append("Invalid email address, come on man!!!!!!")
+            errors.append("Invalid email address.")
         if new_user['first_name'].isalpha() != True:
-            errors.append("First Name cannot contain any numbers, LOL wtf")
+            errors.append("First Name cannot contain any numbers.")
         if new_user['last_name'].isalpha() != True:
-            errors.append("Last Name cannot contain any numbers, LOL wtf")
+            errors.append("Last Name cannot contain any numbers.")
         if errors:
             print errors
             return {"status": False, "errors":errors}

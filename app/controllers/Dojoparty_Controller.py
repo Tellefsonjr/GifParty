@@ -21,9 +21,10 @@ class Dojoparty_Controller(Controller):
             'first_name':request.form['first_name'],
             'last_name':request.form['last_name'],
             'email':request.form['email'],
-            'password':request.form['passwordRegister'],
+            'password':request.form['password'],
             'confirm_password':request.form['password_confirm']
             }
+        print("noo yooser", new_user)
         register_attempt = self.models["Dojoparty_Model"].add(new_user)
         if register_attempt['status'] == True:
             print
@@ -44,7 +45,7 @@ class Dojoparty_Controller(Controller):
             }
         user_login = self.models['Dojoparty_Model'].login(login_data)
         if user_login == False:
-            flash(u"Email and or password does not match our database, LOL try again doo-doo head. ^_^")
+            flash(u"Email and or password does not match our database, please try again. ^_^")
             return redirect('/')
         else:
             session['id'] = user_login['user']['id']
@@ -69,4 +70,3 @@ class Dojoparty_Controller(Controller):
     def logout(self):
         session['name'] = ''
         return redirect('/')
-
